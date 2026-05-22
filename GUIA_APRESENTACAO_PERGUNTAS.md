@@ -2,11 +2,18 @@
 
 Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no sorteio. Cada pergunta ta aqui com a resposta real do dataset, o que falar na hora e onde mostrar no app. Leiam e pratiquem antes da apresentacao.
 
+Importante: agora o projeto usa dois datasets separados:
+
+- Dataset de TAXA (Rate per 100k) pra comparar paises de forma justa
+- Dataset de CONTAGEM (Counts) pra perguntas que pedem totais absolutos
+
 ---
 
 ## Pergunta 1
 
 **Quais sao os 10 paises com maior taxa media de homicidio nos ultimos 5 anos disponiveis?**
+
+(Usa dataset de TAXA)
 
 ### Resposta
 
@@ -25,11 +32,12 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 ### O que falar
 
-"A gente filtrou os dados pra sexo Total nos ultimos 5 anos (2018-2022), calculou a media por pais e ordenou do maior pro menor. A Jamaica lidera com quase 50 homicidios por 100 mil habitantes. Um ponto importante: 7 dos 10 paises sao do Caribe e America Central, o que mostra a concentracao de violencia nessa regiao."
+"A gente filtrou os dados pra sexo Total nos ultimos 5 anos (2018-2022), calculou a media por pais e ordenou do maior pro menor. Usamos a taxa por 100 mil habitantes pra comparar de forma justa, independente do tamanho da populacao. A Jamaica lidera com quase 50 homicidios por 100 mil. 7 dos 10 paises sao do Caribe e America Central, mostrando a concentracao de violencia nessa regiao."
 
 ### Onde mostrar no app
 
 - Aba Rankings -> Top 10 paises
+- Aba Mapa Mundial (selecionar ultimo ano disponivel)
 - Aba Estatisticas Gerais -> Expandir perguntas -> Pergunta 1
 
 ---
@@ -37,6 +45,8 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 ## Pergunta 2
 
 **Quais sao os 10 paises com maior taxa de homicidio feminino em 2022?**
+
+(Usa dataset de TAXA)
 
 ### Resposta
 
@@ -55,11 +65,12 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 ### O que falar
 
-"Aqui a gente filtrou pra sexo Female no ano de 2022 e ordenou pela taxa. Santa Lucia e Sao Vicente lideram com quase 10 homicidios femininos por 100 mil. A Letonia e o unico pais europeu na lista, todo o resto e das Americas. Isso mostra que a violencia contra mulheres e particularmente grave no Caribe e America Latina."
+"Filtramos pra sexo Female no ano de 2022 e ordenamos pela taxa. Santa Lucia e Sao Vicente lideram com quase 10 homicidios femininos por 100 mil. A Letonia e o unico pais europeu na lista, todo o resto e das Americas. Isso mostra que a violencia contra mulheres e particularmente grave no Caribe e America Latina."
 
 ### Onde mostrar no app
 
 - Aba Violencia contra Mulheres -> Top 10 paises
+- Aba Mapa Mundial (selecionar 2022, sexo Female)
 - Aba Estatisticas Gerais -> Pergunta 2
 
 ---
@@ -68,19 +79,21 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 **Quais regioes possuem os maiores totais de homicidios?**
 
+(Usa dataset de CONTAGEM - numeros absolutos)
+
 ### Resposta
 
-| #   | Regiao   | Total Acumulado |
-| --- | -------- | --------------- |
-| 1   | Americas | 21.921,50       |
-| 2   | Africa   | 3.788,75        |
-| 3   | Europa   | 3.477,82        |
-| 4   | Asia     | 3.314,89        |
-| 5   | Oceania  | 683,79          |
+| #   | Regiao   | Total de Homicidios |
+| --- | -------- | ------------------- |
+| 1   | Americas | 4.357.154           |
+| 2   | Asia     | 2.852.197           |
+| 3   | Europa   | 1.222.767           |
+| 4   | Africa   | 954.817             |
+| 5   | Oceania  | 18.407              |
 
 ### O que falar
 
-"A gente agrupou por regiao e somou todas as taxas com sexo Total. As Americas dominam com mais de 21 mil no acumulado, quase 6 vezes mais que a segunda colocada que e a Africa. Europa e Asia ficam proximas, e Oceania tem o menor total. Isso reflete tanto as altas taxas quanto o grande numero de paises com dados na regiao."
+"Aqui usamos o dataset de CONTAGEM, nao de taxa, porque a pergunta pede o numero total de homicidios. As Americas lideram com mais de 4.3 milhoes de homicidios acumulados. A Asia vem em segundo com 2.8 milhoes, o que faz sentido pela populacao enorme. A Africa aparece em quarto porque muitos paises africanos tem dados incompletos no dataset da UNODC."
 
 ### Onde mostrar no app
 
@@ -93,34 +106,33 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 **Quais paises possuem a menor taxa de homicidio por sub-regiao?**
 
+(Usa dataset de TAXA)
+
 ### Resposta
 
-| Sub-regiao                | Pais mais seguro               | Taxa Media |
-| ------------------------- | ------------------------------ | ---------- |
-| Australia e Nova Zelandia | Nova Zelandia                  | 1.25       |
-| Asia Central              | Uzbequistao                    | 3.59       |
-| Asia Oriental             | Japao                          | 0.44       |
-| Europa Oriental           | Tchequia                       | 1.18       |
-| America Latina e Caribe   | Chile                          | 3.84       |
-| Melanesia                 | Vanuatu                        | 0.49       |
-| Micronesia                | Micronesia (Estados Federados) | 0.90       |
-| Norte da Africa           | Egito                          | 1.20       |
-| America do Norte          | Canada                         | 1.92       |
-| Norte da Europa           | Islandia                       | 0.57       |
-| Polinesia                 | Polinesia Francesa             | 1.79       |
-| Sudeste Asiatico          | Singapura                      | 0.67       |
-| Sul da Asia               | Maldivas                       | 1.95       |
-| Sul da Europa             | Santa Se (Vaticano)            | 0.00       |
-| Africa Subsaariana        | Santa Helena                   | 1.11       |
-| Asia Ocidental            | Catar                          | 0.55       |
-| Europa Ocidental          | Austria                        | 0.84       |
+| Sub-regiao                | Pais mais seguro    | Taxa Media |
+| ------------------------- | ------------------- | ---------- |
+| Australia e Nova Zelandia | Nova Zelandia       | 1.25       |
+| Asia Central              | Uzbequistao         | 3.59       |
+| Asia Oriental             | Japao               | 0.44       |
+| Europa Oriental           | Tchequia            | 1.18       |
+| America Latina e Caribe   | Chile               | 3.84       |
+| Melanesia                 | Vanuatu             | 0.49       |
+| Norte da Africa           | Egito               | 1.20       |
+| America do Norte          | Canada              | 1.92       |
+| Norte da Europa           | Islandia            | 0.57       |
+| Sudeste Asiatico          | Singapura           | 0.67       |
+| Sul da Europa             | Santa Se (Vaticano) | 0.00       |
+| Asia Ocidental            | Catar               | 0.55       |
+| Europa Ocidental          | Austria             | 0.84       |
 
 ### O que falar
 
-"Pra cada sub-regiao, a gente calculou a media historica de cada pais e pegou o de menor taxa. O Japao e o mais seguro da Asia Oriental com 0.44, a Islandia no Norte da Europa com 0.57, e o Chile e o mais seguro da America Latina com 3.84. Isso mostra que mesmo em regioes violentas existem paises com taxas bem baixas."
+"Pra cada sub-regiao, calculamos a media historica de cada pais e pegamos o de menor taxa. O Japao e o mais seguro da Asia Oriental com 0.44, a Islandia no Norte da Europa com 0.57, e o Chile e o mais seguro da America Latina com 3.84. Mesmo em regioes violentas existem paises com taxas bem baixas."
 
 ### Onde mostrar no app
 
+- Aba Mapa Mundial (visualizar paises com cores claras)
 - Aba Estatisticas Gerais -> Pergunta 4
 
 ---
@@ -128,6 +140,8 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 ## Pergunta 5
 
 **Quais paises possuem as menores taxas de homicidio feminino?**
+
+(Usa dataset de TAXA)
 
 ### Resposta
 
@@ -151,6 +165,7 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 ### Onde mostrar no app
 
 - Aba Violencia contra Mulheres
+- Aba Mapa Mundial (sexo Female, ver paises claros)
 - Aba Estatisticas Gerais -> Pergunta 5
 
 ---
@@ -159,19 +174,21 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 **Quais sub-regioes possuem os maiores totais de homicidios?**
 
+(Usa dataset de CONTAGEM - numeros absolutos)
+
 ### Resposta
 
-| #   | Sub-regiao              | Total Acumulado |
-| --- | ----------------------- | --------------- |
-| 1   | America Latina e Caribe | 21.083,65       |
-| 2   | Africa Subsaariana      | 3.671,79        |
-| 3   | Europa Oriental         | 1.521,11        |
-| 4   | Asia Ocidental          | 1.054,65        |
-| 5   | Norte da Europa         | 1.002,36        |
+| #   | Sub-regiao              | Total de Homicidios |
+| --- | ----------------------- | ------------------- |
+| 1   | America Latina e Caribe | 3.784.868           |
+| 2   | Sul da Asia             | 1.883.914           |
+| 3   | Europa Oriental         | 1.034.177           |
+| 4   | Africa Subsaariana      | 909.369             |
+| 5   | America do Norte        | 572.286             |
 
 ### O que falar
 
-"Agrupamos por sub-regiao e somamos as taxas. America Latina e Caribe domina com mais de 21 mil no acumulado, quase 6 vezes mais que a segunda que e Africa Subsaariana. Europa Oriental aparece em terceiro, puxada pela Russia e Ucrania. A violencia ta concentrada em sub-regioes bem especificas."
+"Usamos o dataset de CONTAGEM porque a pergunta pede totais. America Latina e Caribe domina com quase 3.8 milhoes de homicidios acumulados. Sul da Asia aparece em segundo com 1.8 milhoes, puxado pela India. Europa Oriental em terceiro, influenciada pela Russia. A diferenca entre usar contagem e taxa e importante: a India tem muitos homicidios em numero absoluto mas taxa relativamente baixa por causa da populacao enorme."
 
 ### Onde mostrar no app
 
@@ -182,6 +199,8 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 ## Pergunta 7
 
 **Qual pais possui a maior taxa de homicidio por continente em 2020?**
+
+(Usa dataset de TAXA)
 
 ### Resposta
 
@@ -199,6 +218,7 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 ### Onde mostrar no app
 
+- Aba Mapa Mundial (selecionar ano 2020)
 - Aba Rankings (filtrar ano 2020 no slider)
 - Aba Estatisticas Gerais -> Pergunta 7
 
@@ -207,6 +227,8 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 ## Pergunta 8
 
 **Qual e o pais mais violento para mulheres em 2021?**
+
+(Usa dataset de TAXA)
 
 ### Resposta
 
@@ -220,6 +242,7 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 ### Onde mostrar no app
 
+- Aba Mapa Mundial (ano 2021, sexo Female)
 - Aba Violencia contra Mulheres (filtrar ano 2021)
 - Aba Estatisticas Gerais -> Pergunta 8
 
@@ -229,6 +252,8 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 **Qual pais possui o maior valor individual de indicador em todos os anos?**
 
+(Usa dataset de TAXA)
+
 ### Resposta
 
 | Pais        | Ano  | Taxa (por 100k) |
@@ -237,11 +262,12 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 ### O que falar
 
-"Buscamos o maior valor individual em todo o dataset. El Salvador em 2015 registrou 369 homicidios por 100 mil habitantes, ou seja, quase 0.4% da populacao foi vitima de homicidio naquele ano. Isso coincide com o pico da guerra entre gangues MS-13 e Barrio 18, antes das politicas de mao dura que vieram depois."
+"Buscamos o maior valor individual em todo o dataset de taxa. El Salvador em 2015 registrou 369 homicidios por 100 mil habitantes, ou seja, quase 0.4% da populacao foi vitima de homicidio naquele ano. Isso coincide com o pico da guerra entre gangues MS-13 e Barrio 18, antes das politicas de mao dura que vieram depois."
 
 ### Onde mostrar no app
 
 - Aba Series Temporais (selecionar El Salvador)
+- Aba Mapa Mundial (ano 2015)
 - Aba Estatisticas Gerais -> Pergunta 9
 
 ---
@@ -249,6 +275,8 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 ## Pergunta 10
 
 **Qual e a taxa media de homicidio do Brasil nos ultimos 10 anos disponiveis?**
+
+(Usa dataset de TAXA)
 
 ### Resposta
 
@@ -262,6 +290,7 @@ Pessoal, vamos usar esse guia pra se preparar pra qualquer pergunta que cair no 
 
 ### Onde mostrar no app
 
+- Aba Mapa Mundial (selecionar ultimo ano, ver Brasil em vermelho)
 - Aba Series Temporais (selecionar Brazil)
 - Aba Regressao e Predicao (selecionar Brazil)
 - Aba Estatisticas Gerais -> Pergunta 10
@@ -275,10 +304,23 @@ Independente da pergunta que cair, a gente precisa mostrar o Data App com a regr
 1. Abrir a aba Regressao e Predicao
 2. Selecionar Brazil no dropdown
 3. Mostrar as metricas dos dois modelos lado a lado (MAE, RMSE, R2)
-4. Falar: "Usamos dois modelos, Regressao Linear e Random Forest, com 80% treino e 20% teste"
+4. Falar: "Usamos dois modelos, Regressao Linear e Random Forest. O split e temporal: treinamos com dados ate 2018 e testamos com 2019-2022, pra nunca usar dados futuros no treino."
 5. Mostrar o grafico de Historico vs Previsoes: "A linha azul e o historico, os pontos vermelhos sao as previsoes pra 2023-2026"
 6. Mostrar o grafico Real vs Predito: "Quanto mais perto da diagonal, melhor o modelo"
-7. Concluir: "O Random Forest teve melhor desempenho, e os dois modelos indicam tendencia de queda na taxa do Brasil"
+7. Falar sobre limitacao: "O Random Forest nao extrapola bem fora do intervalo observado, por isso a Regressao Linear e mais confiavel pra previsao futura. O RF foi usado apenas como comparativo."
+8. Concluir: "Os dois modelos indicam tendencia de queda na taxa do Brasil"
+
+---
+
+## Mapa Mundial (mostrar em qualquer pergunta)
+
+O mapa e um diferencial visual forte. Em qualquer pergunta, vale mostrar:
+
+1. Abrir a aba Mapa Mundial
+2. Selecionar o ano relevante pra pergunta
+3. Selecionar o sexo (Total ou Female dependendo da pergunta)
+4. Mostrar como os paises mais violentos aparecem em vermelho escuro
+5. Falar: "O mapa usa a projecao Natural Earth e mostra a taxa por 100 mil habitantes. Paises sem dados ficam em cinza."
 
 ---
 
@@ -286,6 +328,7 @@ Independente da pergunta que cair, a gente precisa mostrar o Data App com a regr
 
 ```bash
 cd c:\Users\ki8443\Videos\itentional-crime
+python -c "from src.cleaning import run_cleaning_pipeline; run_cleaning_pipeline('data/data_cts_intentional_homicide.xlsx', 'outputs')"
 python -m streamlit run app/streamlit_app.py
 ```
 

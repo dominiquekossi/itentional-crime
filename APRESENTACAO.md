@@ -133,21 +133,24 @@ _Valores aproximados por 100.000 habitantes_
 
 5. **Brasil:** Taxa média de ~26.5 por 100.000 nos últimos 10 anos, com tendência de redução. Os modelos preveem continuidade dessa queda até 2026.
 
-6. **Random Forest vs Linear:** O Random Forest apresentou melhor desempenho (menor erro, maior R²) por capturar variações não-lineares nos dados.
+6. **Random Forest vs Linear:** A Regressao Linear e mais adequada para extrapolacao temporal. O Random Forest nao extrapola bem fora do intervalo observado e foi usado apenas como modelo comparativo. O split e temporal (treino ate 2018, teste 2019-2022).
 
 ---
 
 ## 8. Entregáveis do Projeto
 
-| Entregável                           | Descrição                                   |
-| ------------------------------------ | ------------------------------------------- |
-| `notebooks/analise_homicidios.ipynb` | Notebook completo com toda a análise        |
-| `app/streamlit_app.py`               | Dashboard interativo com filtros e gráficos |
-| `src/cleaning.py`                    | Módulo de limpeza de dados                  |
-| `src/eda.py`                         | Módulo de análise exploratória              |
-| `src/regression.py`                  | Módulo de regressão e previsão              |
-| `images/`                            | Gráficos exportados em PNG                  |
-| `outputs/`                           | Datasets limpos em CSV                      |
+| Entregável                           | Descrição                                                   |
+| ------------------------------------ | ----------------------------------------------------------- |
+| `notebooks/analise_homicidios.ipynb` | Notebook completo com toda a análise                        |
+| `app/streamlit_app.py`               | Dashboard interativo com 7 abas e mapa mundial              |
+| `src/cleaning.py`                    | Módulo de limpeza (taxa + contagem + duplicados + features) |
+| `src/eda.py`                         | Módulo de EDA (Plotly + Seaborn + Matplotlib)               |
+| `src/regression.py`                  | Módulo de regressão com split temporal                      |
+| `outputs/dataset_limpo.csv`          | Dataset de taxa limpo                                       |
+| `outputs/dataset_counts.csv`         | Dataset de contagem limpo                                   |
+| `outputs/dataset_regressao.csv`      | Dataset preparado para regressão                            |
+| `images/`                            | Gráficos exportados (Plotly + Seaborn)                      |
+| `presentation/roteiro_slides.md`     | Estrutura de slides para apresentação                       |
 
 ---
 
