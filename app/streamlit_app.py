@@ -161,6 +161,7 @@ st.title("Analise de Homicidios Globais")
 tabs = st.tabs(
     [
         "Visão Geral",
+        "Mapa Mundial",
         "Rankings",
         "Violência contra Mulheres",
         "Séries Temporais",
@@ -211,10 +212,69 @@ with tabs[0]:
         st.info("Nenhum dado disponível para os filtros selecionados.")
 
 # ---------------------------------------------------------------------------
-# Tab 2: Rankings
+# Tab 2: Mapa Mundial
 # ---------------------------------------------------------------------------
 
 with tabs[1]:
+    st.header("Mapa Mundial de Homicidios")
+
+    # Year selector for map
+    map_years = sorted(df["year"].unique())
+    map_year = st.selectbox(
+        "Selecione o ano",
+        options=map_years,
+        index=len(map_years) - 1,
+        key="map_year",
+    )
+
+    # Sex selector for map
+    map_sex = st.radio(
+        "Sexo", options=["Total", "Female", "Male"], index=0, key="map_sex", horizontal=True
+    )
+
+    # Filter data for map
+    df_map = df[
+        (df["year"] == map_year)
+        & (df["sex"] == map_sex)
+    ]
+
+    # Aggregate to one row per country (in case of multiple dimension/category/age)
+    df_map_agg = (
+        df_map.groupby(["iso3_code", "country"])["value"]
+        .mean()
+        .reset_index()
+    )
+
+    if not df_map_agg.empty:
+        fig_map = px.choropleth(
+            df_map_agg,
+            locations="iso3_code",
+            color="value",
+            hover_name="country",
+            color_continuous_scale="YlOrRd",
+            title=f"Taxa de Homicidio por Pais ({map_year} - {map_sex})",
+            template="plotly_white",
+            labels={"value": "Taxa (por 100k)", "iso3_code": "ISO3"},
+        )
+        fig_map.update_layout(
+            geo=dict(showframe=False, showcoastlines=True, projection_type="natural earth"),
+            height=600,
+        )
+        st.plotly_chart(fig_map, use_container_width=True)
+
+        st.caption(
+            f"Mapa mostrando a taxa de homicidio por 100.000 habitantes "
+            f"para o ano {map_year}, sexo: {map_sex}. "
+            f"Paises sem dados aparecem em cinza."
+        )
+    else:
+        st.info("Nenhum dado disponivel para o ano e sexo selecionados.")
+
+# ---------------------------------------------------------------------------
+# Tab 3: Rankings
+# ---------------------------------------------------------------------------
+
+with tabs[2]:
     st.header("Rankings de Países")
 
     if not df_filtered.empty:
@@ -262,7 +322,7 @@ with tabs[1]:
 # Tab 3: Violência contra Mulheres
 # ---------------------------------------------------------------------------
 
-with tabs[2]:
+with tabs[3]:
     st.header("Violência contra Mulheres")
 
     # Filter for female data regardless of sidebar sex selection
@@ -336,7 +396,7 @@ with tabs[2]:
 # Tab 4: Séries Temporais
 # ---------------------------------------------------------------------------
 
-with tabs[3]:
+with tabs[4]:
     st.header("Séries Temporais")
 
     if not df_filtered.empty:
@@ -399,7 +459,7 @@ with tabs[3]:
 # Tab 5: Regressão e Predição
 # ---------------------------------------------------------------------------
 
-with tabs[4]:
+with tabs[5]:
     st.header("Regressão e Predição")
 
     # Country selector for regression
@@ -503,7 +563,7 @@ with tabs[4]:
 # Tab 6: Estatísticas Gerais
 # ---------------------------------------------------------------------------
 
-with tabs[5]:
+with tabs[6]:
     st.header("Estatísticas Gerais")
 
     if not df_filtered.empty:
