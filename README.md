@@ -177,6 +177,29 @@ itentional-crime/
 
 ---
 
+## Limitacoes do Estudo
+
+### Sobre os Dados
+
+- Os dados dependem da qualidade dos registros oficiais de cada pais
+- Alguns paises podem ter subnotificacao significativa
+- Dados incompletos em determinados periodos para alguns paises
+
+### Sobre a Regressao
+
+- **Regressao Linear** e mais adequada para extrapolacao temporal (prever anos futuros) pois assume tendencia linear continua
+- **Random Forest** possui limitacao conhecida: nao consegue prever valores fora do intervalo observado no treino. Foi utilizado apenas como modelo comparativo
+- A previsao utiliza apenas o ano como variavel preditora, nao considerando fatores socioeconomicos, politicas publicas ou eventos externos
+- O split temporal (treino ate 2018, teste 2019-2022) garante que o modelo nunca "ve" dados futuros durante o treinamento
+
+### Sobre as Analises
+
+- Perguntas sobre "totais de homicidios" utilizam o dataset de contagem (Counts)
+- Perguntas sobre "taxas" utilizam o dataset de taxa (Rate per 100,000)
+- A taxa por 100k permite comparacao justa entre paises de tamanhos diferentes
+
+---
+
 ## Licença
 
 Projeto acadêmico — uso educacional.

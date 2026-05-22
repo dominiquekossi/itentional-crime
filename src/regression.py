@@ -11,7 +11,6 @@ import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
 
 from src.utils import save_plotly_chart
 
@@ -19,11 +18,13 @@ from src.utils import save_plotly_chart
 def prepare_regression_data(
     df: pd.DataFrame, country: str
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Filter data by country and prepare train/test splits for regression.
+    """Filter data by country and prepare temporal train/test splits for regression.
 
     Filters the DataFrame for the specified country, extracts year as the
-    feature (reshaped to 2D) and value as the target, then performs an
-    80/20 train-test split.
+    feature (reshaped to 2D) and value as the target, then performs a
+    temporal split: train on years <= 2018, test on years >= 2019.
+    If no data exists after 2018, falls back to using the last 20% of
+    years chronologically as the test set.
 
     Parameters
     ----------
@@ -37,13 +38,24 @@ def prepare_regression_data(
     tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
         A tuple of (X_train, X_test, y_train, y_test).
     """
-    df_country = df[df["country"] == country].copy()
+    df_country = df[df["country"] == country].sort_values("year").copy()
     X = df_country["year"].values.reshape(-1, 1)
     y = df_country["value"].values
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    # Temporal split: train <= 2018, test >= 2019
+    train_mask = df_country["year"].values <= 2018
+    test_mask = df_country["year"].values >= 2019
+
+    if test_mask.sum() == 0:
+        # Fallback: last 20% of years chronologically
+        n = len(df_country)
+        split_idx = int(n * 0.8)
+        X_train, X_test = X[:split_idx], X[split_idx:]
+        y_train, y_test = y[:split_idx], y[split_idx:]
+    else:
+        X_train, X_test = X[train_mask], X[test_mask]
+        y_train, y_test = y[train_mask], y[test_mask]
+
     return X_train, X_test, y_train, y_test
 
 
@@ -253,6 +265,8 @@ def plot_real_vs_predicted(
 def compare_models(df: pd.DataFrame, country: str) -> dict:
     """Train both models, evaluate both, and return a comparison dictionary.
 
+    Uses temporal split: train on years <= 2018, test on years >= 2019.
+
     Parameters
     ----------
     df : pd.DataFrame
@@ -282,9 +296,9 @@ def run_regression_pipeline(
 ) -> dict:
     """Run the full regression workflow for a given country.
 
-    Prepares data, trains both models, evaluates performance, generates
-    future predictions (2023-2026), creates visualization charts, and
-    saves charts to the output directory.
+    Prepares data using temporal split, trains both models, evaluates
+    performance, generates future predictions (2023-2026), creates
+    visualization charts, and saves charts to the output directory.
 
     Parameters
     ----------

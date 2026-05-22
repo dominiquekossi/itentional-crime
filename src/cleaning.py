@@ -90,6 +90,22 @@ def filter_rate_unit(df: pd.DataFrame) -> pd.DataFrame:
     return df[df["unit_of_measurement"] == "Rate per 100,000 population"].copy()
 
 
+def filter_counts_unit(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep only rows where unit_of_measurement is 'Counts'.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with a 'unit_of_measurement' column.
+
+    Returns
+    -------
+    pd.DataFrame
+        Filtered DataFrame containing only count-based rows.
+    """
+    return df[df["unit_of_measurement"] == "Counts"].copy()
+
+
 def remove_global_aggregations(df: pd.DataFrame) -> pd.DataFrame:
     """Remove rows where country contains global aggregation terms.
 
@@ -183,6 +199,60 @@ def convert_types(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove duplicate rows from the DataFrame.
+
+    Counts duplicates before removal, drops them, and logs how many
+    were removed and how many rows remain.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame potentially containing duplicate rows.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with duplicates removed.
+    """
+    n_duplicates = df.duplicated().sum()
+    df = df.drop_duplicates()
+    n_remaining = len(df)
+    logger.info(
+        "Removed %d duplicate rows. %d rows remaining.",
+        n_duplicates,
+        n_remaining,
+    )
+    return df
+
+
+def add_feature_engineering(df: pd.DataFrame) -> pd.DataFrame:
+    """Add derived feature columns to the DataFrame.
+
+    Adds:
+    - 'decade': the decade of the year (e.g., 2010 for year 2015)
+    - 'period': categorical period label (1990s, 2000s, 2010s, 2020s)
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with a 'year' column.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with added feature columns.
+    """
+    df = df.copy()
+    df["decade"] = (df["year"] // 10) * 10
+    df["period"] = pd.cut(
+        df["year"],
+        bins=[1989, 1999, 2009, 2019, 2030],
+        labels=["1990s", "2000s", "2010s", "2020s"],
+    )
+    return df
+
+
 def segment_by_sex(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     """Group the DataFrame by sex column into separate DataFrames.
 
@@ -203,19 +273,25 @@ def segment_by_sex(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     return segments
 
 
-def export_datasets(df: pd.DataFrame, output_dir: str) -> None:
+def export_datasets(
+    df: pd.DataFrame, output_dir: str, df_counts: pd.DataFrame | None = None
+) -> None:
     """Export cleaned and regression-ready datasets to CSV files.
 
-    Exports the full cleaned DataFrame to 'dataset_limpo.csv' and a
+    Exports the full cleaned rate DataFrame to 'dataset_limpo.csv', a
     regression-ready subset (Total sex only, columns: country, year, value)
-    to 'dataset_regressao.csv'.
+    to 'dataset_regressao.csv', and optionally the counts DataFrame to
+    'dataset_counts.csv'.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The full cleaned DataFrame.
+        The full cleaned rate DataFrame.
     output_dir : str
         Directory path where CSV files will be saved.
+    df_counts : pd.DataFrame, optional
+        The cleaned counts DataFrame. If provided, exported to
+        'dataset_counts.csv'.
 
     Returns
     -------
@@ -223,7 +299,7 @@ def export_datasets(df: pd.DataFrame, output_dir: str) -> None:
     """
     ensure_directory(output_dir)
 
-    # Export full cleaned dataset
+    # Export full cleaned dataset (rate)
     full_path = f"{output_dir}/dataset_limpo.csv"
     df.to_csv(full_path, index=False, encoding="utf-8")
 
@@ -232,13 +308,23 @@ def export_datasets(df: pd.DataFrame, output_dir: str) -> None:
     regression_path = f"{output_dir}/dataset_regressao.csv"
     regression_df.to_csv(regression_path, index=False, encoding="utf-8")
 
+    # Export counts dataset if provided
+    if df_counts is not None:
+        counts_path = f"{output_dir}/dataset_counts.csv"
+        df_counts.to_csv(counts_path, index=False, encoding="utf-8")
+
 
 def run_cleaning_pipeline(input_path: str, output_dir: str) -> pd.DataFrame:
     """Execute the full data cleaning pipeline.
 
-    Chains all cleaning steps in sequence: load, standardize columns,
-    filter indicator, filter rate unit, remove global aggregations,
-    remove nulls, convert types, and export results.
+    Chains all cleaning steps in sequence. After standardizing columns and
+    filtering by indicator, branches into two paths:
+    - Rate path: filter_rate_unit -> remove_global_aggregations -> remove_nulls
+      -> convert_types -> remove_duplicates -> add_feature_engineering
+    - Counts path: filter_counts_unit -> remove_global_aggregations -> remove_nulls
+      -> convert_types -> remove_duplicates -> add_feature_engineering
+
+    Both are exported. The rate DataFrame is returned for backward compatibility.
 
     Parameters
     ----------
@@ -250,14 +336,27 @@ def run_cleaning_pipeline(input_path: str, output_dir: str) -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        The fully cleaned DataFrame.
+        The fully cleaned rate DataFrame.
     """
     df = load_raw_data(input_path)
     df = standardize_columns(df)
     df = filter_indicator(df)
-    df = filter_rate_unit(df)
-    df = remove_global_aggregations(df)
-    df = remove_nulls(df)
-    df = convert_types(df)
-    export_datasets(df, output_dir)
-    return df
+
+    # Rate path
+    df_rate = filter_rate_unit(df)
+    df_rate = remove_global_aggregations(df_rate)
+    df_rate = remove_nulls(df_rate)
+    df_rate = convert_types(df_rate)
+    df_rate = remove_duplicates(df_rate)
+    df_rate = add_feature_engineering(df_rate)
+
+    # Counts path
+    df_counts = filter_counts_unit(df)
+    df_counts = remove_global_aggregations(df_counts)
+    df_counts = remove_nulls(df_counts)
+    df_counts = convert_types(df_counts)
+    df_counts = remove_duplicates(df_counts)
+    df_counts = add_feature_engineering(df_counts)
+
+    export_datasets(df_rate, output_dir, df_counts=df_counts)
+    return df_rate

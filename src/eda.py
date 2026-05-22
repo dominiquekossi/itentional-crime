@@ -177,12 +177,69 @@ def plot_heatmap(df: pd.DataFrame, title: str) -> go.Figure:
     return fig
 
 
+def plot_continent_comparison_seaborn(df: pd.DataFrame, output_dir: str) -> None:
+    """Generate continent comparison charts using seaborn and matplotlib.
+
+    Creates two charts:
+    1. Bar plot of average homicide rate by continent
+    2. Temporal evolution of homicide rate by continent
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The cleaned homicide DataFrame.
+    output_dir : str
+        Directory path where PNG chart files will be saved.
+
+    Returns
+    -------
+    None
+    """
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    df_agg = _filter_aggregate(df, "Total")
+
+    # Chart 1: Barplot by continent
+    fig, ax = plt.subplots(figsize=(10, 6))
+    continent_avg = (
+        df_agg.groupby("region")["value"]
+        .mean()
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+    sns.barplot(data=continent_avg, x="region", y="value", ax=ax, palette="Reds_r")
+    ax.set_title("Taxa Media de Homicidio por Continente")
+    ax.set_xlabel("Continente")
+    ax.set_ylabel("Taxa Media (por 100k)")
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, "seaborn_continent_bar.png"), dpi=150)
+    plt.close()
+
+    # Chart 2: Temporal evolution by continent
+    fig, ax = plt.subplots(figsize=(12, 6))
+    continent_year = (
+        df_agg.groupby(["year", "region"])["value"].mean().reset_index()
+    )
+    sns.lineplot(
+        data=continent_year, x="year", y="value", hue="region", ax=ax, palette="Set2"
+    )
+    ax.set_title("Evolucao Temporal da Taxa de Homicidio por Continente")
+    ax.set_xlabel("Ano")
+    ax.set_ylabel("Taxa Media (por 100k)")
+    ax.legend(title="Continente")
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, "seaborn_continent_temporal.png"), dpi=150)
+    plt.close()
+
+
 def generate_all_charts(df: pd.DataFrame, output_dir: str) -> None:
     """Generate all EDA chart types and save them as PNG files.
 
     Creates representative charts: histogram of homicide rates, boxplot
     by region, line chart of trends for top countries, bar chart of top
-    countries by average rate, and a correlation heatmap.
+    countries by average rate, a correlation heatmap, and seaborn
+    continent comparison charts.
 
     Parameters
     ----------
@@ -237,6 +294,9 @@ def generate_all_charts(df: pd.DataFrame, output_dir: str) -> None:
     # Heatmap of correlations
     fig_heat = plot_heatmap(df, "Matriz de Correlação — Variáveis Numéricas")
     save_plotly_chart(fig_heat, os.path.join(output_dir, "heatmap_correlation.png"))
+
+    # Seaborn continent comparison charts
+    plot_continent_comparison_seaborn(df, output_dir)
 
 
 # ---------------------------------------------------------------------------
@@ -299,23 +359,28 @@ def answer_question_2(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def answer_question_3(df: pd.DataFrame) -> pd.DataFrame:
+def answer_question_3(
+    df: pd.DataFrame, df_counts: pd.DataFrame | None = None
+) -> pd.DataFrame:
     """Regions with highest total homicide counts.
 
-    Filters for sex == 'Total' (aggregate level), groups by region,
-    sums values, and sorts descending.
+    If df_counts is provided, uses it for summing totals (actual counts).
+    Otherwise, falls back to summing rates from the rate DataFrame.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The cleaned homicide DataFrame.
+        The cleaned homicide DataFrame (rate).
+    df_counts : pd.DataFrame, optional
+        The cleaned counts DataFrame. If provided, used for summing totals.
 
     Returns
     -------
     pd.DataFrame
         DataFrame with columns ['region', 'total_value'] sorted descending.
     """
-    df_total = _filter_aggregate(df, "Total")
+    source = df_counts if df_counts is not None else df
+    df_total = _filter_aggregate(source, "Total")
     result = (
         df_total.groupby("region")["value"]
         .sum()
@@ -380,23 +445,28 @@ def answer_question_5(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def answer_question_6(df: pd.DataFrame) -> pd.DataFrame:
+def answer_question_6(
+    df: pd.DataFrame, df_counts: pd.DataFrame | None = None
+) -> pd.DataFrame:
     """Sub-regions with highest total homicide counts.
 
-    Filters for sex == 'Total' (aggregate level), groups by sub-region,
-    sums values, and sorts descending.
+    If df_counts is provided, uses it for summing totals (actual counts).
+    Otherwise, falls back to summing rates from the rate DataFrame.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The cleaned homicide DataFrame.
+        The cleaned homicide DataFrame (rate).
+    df_counts : pd.DataFrame, optional
+        The cleaned counts DataFrame. If provided, used for summing totals.
 
     Returns
     -------
     pd.DataFrame
         DataFrame with columns ['subregion', 'total_value'] sorted descending.
     """
-    df_total = _filter_aggregate(df, "Total")
+    source = df_counts if df_counts is not None else df
+    df_total = _filter_aggregate(source, "Total")
     result = (
         df_total.groupby("subregion")["value"]
         .sum()
@@ -496,13 +566,18 @@ def answer_question_10(df: pd.DataFrame) -> float:
     return float(df_filtered["value"].mean())
 
 
-def answer_all_questions(df: pd.DataFrame) -> dict:
+def answer_all_questions(
+    df: pd.DataFrame, df_counts: pd.DataFrame | None = None
+) -> dict:
     """Execute all 10 statistical question functions and return results.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The cleaned homicide DataFrame.
+        The cleaned homicide DataFrame (rate).
+    df_counts : pd.DataFrame, optional
+        The cleaned counts DataFrame. If provided, passed to questions
+        3 and 6 for accurate total counts.
 
     Returns
     -------
@@ -513,10 +588,10 @@ def answer_all_questions(df: pd.DataFrame) -> dict:
     return {
         "q1": answer_question_1(df),
         "q2": answer_question_2(df),
-        "q3": answer_question_3(df),
+        "q3": answer_question_3(df, df_counts=df_counts),
         "q4": answer_question_4(df),
         "q5": answer_question_5(df),
-        "q6": answer_question_6(df),
+        "q6": answer_question_6(df, df_counts=df_counts),
         "q7": answer_question_7(df),
         "q8": answer_question_8(df),
         "q9": answer_question_9(df),
