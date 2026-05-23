@@ -303,8 +303,13 @@ def export_datasets(
     full_path = f"{output_dir}/dataset_limpo.csv"
     df.to_csv(full_path, index=False, encoding="utf-8")
 
-    # Export regression-ready dataset (Total sex only, key columns)
-    regression_df = df[df["sex"] == "Total"][["country", "year", "value"]].copy()
+    # Export regression-ready dataset (Total sex only, aggregate level, key columns)
+    regression_df = df[
+        (df["sex"] == "Total")
+        & (df["dimension"] == "Total")
+        & (df["category"] == "Total")
+        & (df["age"] == "Total")
+    ][["country", "year", "value"]].copy()
     regression_path = f"{output_dir}/dataset_regressao.csv"
     regression_df.to_csv(regression_path, index=False, encoding="utf-8")
 
