@@ -126,6 +126,13 @@ def apply_filters(dataframe: pd.DataFrame) -> pd.DataFrame:
     """Apply all sidebar filter selections to the DataFrame."""
     filtered = dataframe.copy()
 
+    # Keep only aggregate-level rows (one per country/year/sex)
+    filtered = filtered[
+        (filtered["dimension"] == "Total")
+        & (filtered["category"] == "Total")
+        & (filtered["age"] == "Total")
+    ]
+
     # Filter by sex
     filtered = filtered[filtered["sex"] == selected_sex]
 
@@ -328,6 +335,9 @@ with tabs[3]:
     # Filter for female data regardless of sidebar sex selection
     df_female = df[
         (df["sex"] == "Female")
+        & (df["dimension"] == "Total")
+        & (df["category"] == "Total")
+        & (df["age"] == "Total")
         & (df["year"] >= selected_years[0])
         & (df["year"] <= selected_years[1])
     ]
@@ -363,6 +373,9 @@ with tabs[3]:
         st.subheader("Comparação: Homicídio Masculino vs Feminino")
         df_male = df[
             (df["sex"] == "Male")
+            & (df["dimension"] == "Total")
+            & (df["category"] == "Total")
+            & (df["age"] == "Total")
             & (df["year"] >= selected_years[0])
             & (df["year"] <= selected_years[1])
         ]
